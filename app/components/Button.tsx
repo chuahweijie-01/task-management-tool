@@ -17,7 +17,7 @@ const Button = ({
     className,
     type = 'button',
     padding = 'px-6 py-2',
-    scale = 1.1,
+    scale = 1.05,
     onClick }: ButtonProps) => {
     return (
         <motion.button

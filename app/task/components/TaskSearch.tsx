@@ -20,7 +20,7 @@ const TaskSearch: React.FC<TaskSearchProps> = ({
         <input
             type='text'
             placeholder='Search for tasks...'
-            className='border rounded-lg p-2 border-gray-300 w-full mt-4'
+            className='focus:border-gray-500 outline-none border rounded-lg p-2 border-gray-300 w-full mt-4'
             value={search}
             onChange={e => onSearchChange(e.target.value)}
         />

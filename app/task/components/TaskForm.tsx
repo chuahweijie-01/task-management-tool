@@ -4,6 +4,8 @@ import Button from '@/app/components/Button';
 import getTodayDate from '@/app/utils/getTodaysDate';
 import React, { useEffect, useState } from 'react';
 import { ITaskData } from '../interfaces/task.interface';
+import InputField from '@/app/components/InputField';
+import TextField from '@/app/components/TextField';
 
 type Props = {
     isOpen: boolean;
@@ -15,7 +17,7 @@ type Props = {
 
 const MAX_DESCRIPTION_LENGTH = 500;
 
-const CreateTask: React.FC<Props> = ({
+const TaskForm: React.FC<Props> = ({
     isOpen,
     onSubmit,
     initialData,
@@ -44,7 +46,7 @@ const CreateTask: React.FC<Props> = ({
     const validate = (): boolean => {
         const newErrors: Partial<Record<keyof ITaskData, string>> = {};
         if (!title.trim()) newErrors.title = 'Task title is required.';
-        if (description.trim().length > MAX_DESCRIPTION_LENGTH)
+        if (description.trim().length >= MAX_DESCRIPTION_LENGTH)
             newErrors.description = `Description must be less than ${MAX_DESCRIPTION_LENGTH} characters.`;
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -76,11 +78,6 @@ const CreateTask: React.FC<Props> = ({
         if (!initialData) resetForm();
     };
 
-    const inputStyle = (error?: string) =>
-        `border rounded-lg p-2 ${error ? 'border-red-500' : 'border-gray-300'}`;
-    const labelStyle = (error?: string) =>
-        `text-sm font-semibold ${error ? 'text-red-500' : ''}`;
-
     return (
         <div className="py-4 px-2 lg:px-6">
             <div className="flex justify-center items-center pb-2">
@@ -90,49 +87,35 @@ const CreateTask: React.FC<Props> = ({
             </div>
             <form className="flex flex-col gap-4 my-5" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-5 pb-8">
-                    <div className="flex gap-2 flex-col">
-                        <label className={labelStyle(errors.title)}>Task Title</label>
-                        <input
-                            type="text"
-                            value={title}
-                            onChange={e => setTitle(e.target.value)}
-                            placeholder="Task Title"
-                            className={inputStyle(errors.title)}
-                        />
-                        {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
-                    </div>
-                    <div className="flex gap-2 flex-col">
-                        <label className={labelStyle(errors.description)}>Task Description</label>
-                        <textarea
-                            value={description}
-                            onChange={handleDescriptionChange}
-                            placeholder="Task Description"
-                            rows={4}
-                            className={`${inputStyle(errors.description)} min-h-40 max-h-40 resize-none`}
-                        />
-                        {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
-                    </div>
-                    <div className="flex gap-2 flex-col">
-                        <label className="text-sm font-semibold">Deadline Date</label>
-                        <input
-                            type="date"
-                            min={getTodayDate()}
-                            value={deadlineDate}
-                            onChange={e => setDeadlineDate(e.target.value)}
-                            onKeyDown={e => e.preventDefault()}
-                            className="border rounded-lg p-2 border-gray-300 cursor-pointer"
-                        />
-                    </div>
-                    <div className="flex gap-4 items-center">
-                        <input
-                            id="priority-checkbox"
-                            type="checkbox"
-                            checked={isPriority}
-                            onChange={e => setIsPriority(e.target.checked)}
-                            className="accent-green-700 border-gray-300 w-4 h-4"
-                        />
-                        <label htmlFor="priority-checkbox" className="text-sm">Is this task a priority?</label>
-                    </div>
+                    <InputField
+                        label='Task Title'
+                        type='text'
+                        value={title}
+                        placeholder='Task Title'
+                        error={errors.title}
+                        onChange={e => setTitle(e.target.value)}
+                    />
+                    <TextField
+                        label='Task Description'
+                        value={description}
+                        placeholder='Task Description'
+                        onChange={handleDescriptionChange}
+                        rows={4}
+                        error={errors.description}
+                    />
+                    <InputField
+                        label='Deadline Date'
+                        type='date'
+                        value={deadlineDate}
+                        minDate={getTodayDate()}
+                        onChange={e => setDeadlineDate(e.target.value)}
+                    />
+                    <InputField
+                        label='Is this task a priority?'
+                        type='checkbox'
+                        checked={isPriority}
+                        onChange={e => setIsPriority(e.target.checked)}
+                    />
                 </div>
                 <div className="flex gap-3 justify-end flex-col md:flex-row">
                     <Button
@@ -153,4 +136,4 @@ const CreateTask: React.FC<Props> = ({
     );
 };
 
-export default CreateTask;
+export default TaskForm;
