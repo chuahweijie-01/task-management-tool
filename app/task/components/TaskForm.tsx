@@ -82,7 +82,7 @@ const CreateTask: React.FC<Props> = ({
         `text-sm font-semibold ${error ? 'text-red-500' : ''}`;
 
     return (
-        <div className="py-4 px-6">
+        <div className="py-4 px-2 lg:px-6">
             <div className="flex justify-center items-center pb-2">
                 <span className="text-3xl font-bold">
                     {initialData ? 'Edit Task' : 'Create New Task'}
