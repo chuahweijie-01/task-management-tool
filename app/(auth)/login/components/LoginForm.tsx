@@ -1,5 +1,8 @@
+'use client'
+
 import Button from '@/app/components/Button'
-import React from 'react'
+import InputField from '@/app/components/InputField'
+import React, { useState } from 'react'
 
 type Props = {
   handleLogin: (e: React.FormEvent<HTMLFormElement>) => void
@@ -7,30 +10,46 @@ type Props = {
 }
 
 const LoginForm = ({ handleLogin, handleForgotPassword }: Props) => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+
+  const validate = (): boolean => {
+    const newErrors: { email?: string; password?: string } = {}
+    if (!email.trim()) newErrors.email = 'Email is required.'
+    if (!password.trim()) newErrors.password = 'Password is required.'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!validate()) return
+    handleLogin(e)
+  }
+
   return (
-    <form onSubmit={handleLogin} className='flex flex-col gap-5'>
+    <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
       <div className='flex flex-col gap-5 pb-8'>
-        <div className='flex gap-2 flex-col'>
-          <label className='font-bold text-sm'>Email</label>
-          <input
-            type='email'
-            placeholder='Username'
-            className='border rounded-lg p-2 border-gray-300 w-full'
-          />
-        </div>
-        <div className='flex gap-2 flex-col'>
-          <label className='font-bold text-sm'>Password</label>
-          <input
-            type='password'
-            placeholder='Password'
-            className='border rounded-lg p-2 border-gray-300 w-full'
-          />
-          <div className='flex justify-end'>
-            <span className='text-sm cursor-pointer hover:underline' onClick={handleForgotPassword}>
-              Forgot Password?
-            </span>
-          </div>
-        </div>
+        <InputField
+          label='Email'
+          type='email'
+          value={email}
+          placeholder='Email'
+          error={errors.email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <InputField
+          label='Password'
+          type='password'
+          value={password}
+          placeholder='Password'
+          error={errors.password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <span className='flex justify-end text-sm cursor-pointer hover:underline' onClick={handleForgotPassword}>
+          Forgot Password?
+        </span>
       </div>
       <div className='flex flex-col md:flex-row gap-4'>
         <Button

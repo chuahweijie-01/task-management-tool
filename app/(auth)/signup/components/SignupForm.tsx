@@ -1,45 +1,72 @@
+'use client'
+
 import Button from '@/app/components/Button'
-import React from 'react'
+import InputField from '@/app/components/InputField'
+import React, { useState } from 'react'
 
 type Props = {
     handleSignUp: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
 const SignupForm = ({ handleSignUp }: Props) => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [name, setName] = useState('')
+    const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; name?: string }>({})
+
+    const validate = (): boolean => {
+        const newErrors: { email?: string; password?: string; confirmPassword?: string; name?: string } = {}
+        if (!name.trim()) newErrors.name = 'Name is required.'
+        if (!email.trim()) newErrors.email = 'Email is required.'
+        if (!password.trim()) newErrors.password = 'Password is required.'
+        if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match.'
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (!validate()) return
+        handleSignUp(e)
+    }
     return (
-        <form onSubmit={handleSignUp} className='flex flex-col gap-5'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
             <div className='flex flex-col gap-5 pb-8'>
-                <div className='flex gap-2 flex-col'>
-                    <label className='font-bold text-sm'>Your Name</label>
-                    <input
-                        type='textß'
-                        placeholder='Hello, John Doe'
-                        className='border rounded-lg p-2 border-gray-300 w-full'
-                    />
-                </div>
-                <div className='flex gap-2 flex-col'>
-                    <label className='font-bold text-sm'>Email</label>
-                    <input
-                        type='email'
-                        placeholder='Enter your email'
-                        className='border rounded-lg p-2 border-gray-300 w-full'
-                    />
-                </div>
+                <InputField
+                    label='Your Name'
+                    type='text'
+                    value={name}
+                    placeholder='Hello, John Doe'
+                    error={errors.name}
+                    onChange={e => setName(e.target.value)}
+                />
+                <InputField
+                    label='Email'
+                    type='email'
+                    value={email}
+                    placeholder='Email'
+                    error={errors.email}
+                    onChange={e => setEmail(e.target.value)}
+                />
                 <div className='flex gap-2'>
-                    <div className='flex flex-1/2 gap-2 flex-col'>
-                        <label className='font-bold text-sm'>Password</label>
-                        <input
+                    <div className='flex-1/2'>
+                        <InputField
+                            label='Password'
                             type='password'
-                            placeholder='Enter Password'
-                            className='border rounded-lg p-2 border-gray-300 w-full'
+                            value={password}
+                            placeholder='Password'
+                            error={errors.password}
+                            onChange={e => setPassword(e.target.value)}
                         />
                     </div>
-                    <div className='flex flex-1/2 gap-2 flex-col'>
-                        <label className='font-bold text-sm'>Confirm Password</label>
-                        <input
+                    <div className='flex-1/2'>
+                        <InputField
+                            label='Confirm Password'
                             type='password'
+                            value={confirmPassword}
                             placeholder='Re-enter Password'
-                            className='border rounded-lg p-2 border-gray-300 w-full'
+                            error={errors.confirmPassword}
+                            onChange={e => setConfirmPassword(e.target.value)}
                         />
                     </div>
                 </div>

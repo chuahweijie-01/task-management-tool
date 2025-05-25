@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Icon from '../components/Icon';
 import Modal from '../components/Modal';
 import TaskCard from './components/TaskCard';
-import CreateTask from './components/TaskForm';
+import TaskForm from './components/TaskForm';
 import TaskSearch from './components/TaskSearch';
 import { FilterOption } from './constants/filter-option';
 import { ITask, ITaskData } from './interfaces/task.interface';
@@ -105,7 +105,7 @@ const TasksPage = () => {
   return (
     <div className='p-5'>
       <Modal isOpen={openModal} onClose={handleModalClose}>
-        <CreateTask
+        <TaskForm
           isOpen={openModal}
           onSubmit={editingTask ? handleEditTask : handleAddTask}
           initialData={editingTask || undefined}

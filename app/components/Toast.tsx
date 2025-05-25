@@ -38,7 +38,7 @@ const Toast = ({ type, description, onClose }: ToastProps) => {
     const { icon, textColor, borderStyle } = toastMap[type];
 
     useEffect(() => {
-        const timer = setTimeout(() => { if (onClose) onClose(); }, 5000);
+        const timer = setTimeout(() => { if (onClose) onClose(); }, 3000);
         return () => clearTimeout(timer);
     }, [onClose]);
 
