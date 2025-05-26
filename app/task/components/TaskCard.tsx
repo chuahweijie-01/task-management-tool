@@ -62,7 +62,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
             <p>{createdDate}</p>
           </div>
           <div className="flex gap-2 items-center">
-            <Icon icon="clock" className="text-red-500" />
+            <Icon icon="clock" className="text-red-600" />
             <p>{deadlineDate}</p>
           </div>
         </div>
@@ -74,7 +74,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex gap-2">
             <Icon icon="edit-2" className="text-green-600" onClick={onEdit} />
-            <Icon icon="trash-2" className="text-red-500" onClick={onDelete} />
+            <Icon icon="trash-2" className="text-red-600" onClick={onDelete} />
           </div>
           <div>
             <Button

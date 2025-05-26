@@ -16,7 +16,7 @@ const InputField = ({ label, type, value, placeholder, error, minDate, onChange 
 
   return (
     <div className={`flex gap-2 ${type === 'checkbox' ? 'flex-row-reverse justify-end' : 'flex-col'}`}>
-      <label htmlFor={refId} className={`font-bold text-sm ${error ? 'text-red-500' : ''}`}>{label}</label>
+      <label htmlFor={refId} className={`font-bold text-sm ${error ? 'text-red-600' : ''}`}>{label}</label>
       <input
         id={refId}
         type={type}
@@ -26,8 +26,7 @@ const InputField = ({ label, type, value, placeholder, error, minDate, onChange 
         min={type === 'date' ? minDate : undefined}
         className={`focus:border-gray-500 outline-none border rounded-lg p-2 ${type === 'checkbox' ? 'w-4 h-4 accent-green-700' : 'w-full'} ${error ? 'border-red-500' : 'border-gray-300'}`}
       />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
+      {error && <p className="text-red-600 text-sm">{error}</p>}
     </div>
   )
 }
