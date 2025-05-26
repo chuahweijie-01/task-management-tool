@@ -2,7 +2,9 @@
 
 import Button from '@/app/components/Button'
 import InputField from '@/app/components/InputField'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { IPasswordRules } from '../interfaces/password-rules.interface'
+import PasswordRulesValidator from './PasswordRulesValidator'
 
 type Props = {
     handleSignUp: (e: React.FormEvent<HTMLFormElement>) => void
@@ -14,6 +16,20 @@ const SignupForm = ({ handleSignUp }: Props) => {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
     const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; name?: string }>({})
+    const [hasUserInteracted, setHasUserInteracted] = useState(false)
+    const [passwordRules, setPasswordRules] = useState<IPasswordRules>({
+        minLength: false,
+        hasSpecialChar: false,
+        hasAlphanumeric: false,
+    })
+
+    useEffect(() => {
+        setPasswordRules({
+            minLength: password.length >= 8,
+            hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            hasAlphanumeric: /[a-zA-Z]/.test(password) && /\d/.test(password),
+        })
+    }, [password])
 
     const validate = (): boolean => {
         const newErrors: { email?: string; password?: string; confirmPassword?: string; name?: string } = {}
@@ -26,12 +42,19 @@ const SignupForm = ({ handleSignUp }: Props) => {
     }
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (!hasUserInteracted) setHasUserInteracted(true)
         if (!validate()) return
         handleSignUp(e)
     }
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value)
+        if (!hasUserInteracted) setHasUserInteracted(true)
+    }
+
     return (
         <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
-            <div className='flex flex-col gap-5 pb-8'>
+            <div className='flex flex-col gap-5 pb-2'>
                 <InputField
                     label='Your Name'
                     type='text'
@@ -56,7 +79,7 @@ const SignupForm = ({ handleSignUp }: Props) => {
                             value={password}
                             placeholder='Password'
                             error={errors.password}
-                            onChange={e => setPassword(e.target.value)}
+                            onChange={handlePasswordChange}
                         />
                     </div>
                     <div className='flex-1/2'>
@@ -70,6 +93,9 @@ const SignupForm = ({ handleSignUp }: Props) => {
                         />
                     </div>
                 </div>
+                <PasswordRulesValidator
+                    hasUserInteracted={hasUserInteracted}
+                    rules={passwordRules} />
             </div>
             <div className='flex flex-col md:flex-row gap-4'>
                 <Button
