@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Icon from '../components/Icon';
 import Modal from '../components/Modal';
@@ -11,6 +11,7 @@ import { FilterOption } from './constants/filter-option';
 import { ITask, ITaskData } from './interfaces/task.interface';
 import { createTask, deleteTask, getTasks, updateTask } from './api/task';
 import { useToast } from '../hooks/useToast';
+import requestHandler from '../utils/requestHandler';
 
 const sortTasks = (tasks: ITask[]) =>
   tasks.slice().sort((a, b) => {
@@ -21,12 +22,11 @@ const sortTasks = (tasks: ITask[]) =>
   });
 
 const TasksPage = () => {
-  const [openModal, setOpenModal] = useState(false);
   const [tasks, setTasks] = useState<ITask[]>([]);
+  const [openModal, setOpenModal] = useState(false);
   const [editingTask, setEditingTask] = useState<ITask | null>(null);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<FilterOption>('incomplete');
-
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const TasksPage = () => {
     fetchTasks();
   }, []);
 
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = tasks.filter((task) => {
     const matchesSearch = search
       ? task.title.toLowerCase().includes(search.toLowerCase())
       : true;
@@ -76,30 +76,49 @@ const TasksPage = () => {
   }, []);
 
   const handleAddTask = useCallback(async (newTask: ITaskData) => {
-    const data = await createTask(newTask);
+    const data = await requestHandler(
+      createTask(newTask),
+      showToast,
+      'Task added successfully.'
+    );
+    if (!data) return;
     setTasks(sortTasks(data));
     handleModalClose();
-  }, [handleModalClose]);
+  }, [handleModalClose, showToast]);
 
   const handleEditTask = useCallback(async (updatedTask: ITaskData) => {
     if (!editingTask) return;
-    const data = await updateTask(editingTask.id, updatedTask);
+    const data = await requestHandler(
+      updateTask(editingTask.id, updatedTask),
+      showToast,
+      'Task updated successfully.'
+    );
+    if (!data) return;
     setTasks(sortTasks(data));
     handleModalClose();
-  }, [editingTask, handleModalClose]);
+  }, [editingTask, handleModalClose, showToast]);
 
   const handleDeleteTask = useCallback(async (taskId: string) => {
-    const data = await deleteTask(taskId);
+    const data = await requestHandler(
+      deleteTask(taskId),
+      showToast,
+      'Task deleted successfully.'
+    );
+    if (!data) return;
     setTasks(sortTasks(data));
-  }, []);
+  }, [showToast]);
 
   const handleStatusChange = useCallback(async (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
     const updatedTask = { ...task, isCompleted: !task.isCompleted };
-    const data = await updateTask(taskId, updatedTask);
+    const data = await requestHandler(
+      updateTask(taskId, updatedTask),
+      showToast,
+      'Task status updated successfully.'
+    );
+    if (!data) return;
     setTasks(sortTasks(data));
-    showToast({ type: 'success', description: 'Task status updated successfully.' });
   }, [tasks, showToast]);
 
   return (
@@ -129,7 +148,7 @@ const TasksPage = () => {
 
         <div className='grid gap-6 grid-cols-[repeat(auto-fill,minmax(250px,1fr))] items-stretch'>
           <AnimatePresence>
-            {filteredTasks.map(task => (
+            {filteredTasks.map((task) => (
               <motion.div
                 key={task.id}
                 layout

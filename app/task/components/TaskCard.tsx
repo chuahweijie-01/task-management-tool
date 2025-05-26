@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import Button from '@/app/components/Button';
 import Icon from '@/app/components/Icon';
@@ -31,15 +31,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDelete,
   onStatusChange,
 }) => {
-  const [complete, setComplete] = useState(isCompleted);
   const { totalDays, consumedDay } = getRemainingDays({ createdDate, deadlineDate });
 
-  const handleToggleComplete = () => {
-    const newStatus = !complete;
-    setComplete(newStatus);
-    onStatusChange();
-  };
-  
   const progressPercent = totalDays > 0 ? Math.round((consumedDay / totalDays) * 100) : 0;
 
   return (
@@ -68,7 +61,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         </div>
 
         <div className="pb-2">
-          <ProgressBar percentage={progressPercent} isCompleted={complete} />
+          <ProgressBar percentage={progressPercent} isCompleted={isCompleted} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -78,10 +71,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
           </div>
           <div>
             <Button
-              onClick={handleToggleComplete}
-              className={`${complete ? 'bg-green-200' : 'bg-orange-200'}`}
+              onClick={onStatusChange}
+              className={`${isCompleted ? 'bg-green-200' : 'bg-orange-200'}`}
               padding='px-3 py-1'
-              label={complete ? 'Done' : 'Mark As Done'}
+              label={isCompleted ? 'Done' : 'Mark As Done'}
             />
           </div>
         </div>
