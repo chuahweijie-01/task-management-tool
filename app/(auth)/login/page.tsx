@@ -19,7 +19,6 @@ const LoginPage = () => {
       'Login successfully.',
       'Login failed.'
     )
-    await login(userLoginInfo);
     if (!data) return;
     window.location.href = '/task';
   }
