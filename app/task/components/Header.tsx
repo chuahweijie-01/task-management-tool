@@ -8,7 +8,7 @@ const Header = () => {
   const handleSignOut = async () => {
     const data = await logout();
     if (!data) return;
-    redirect('/login');
+    window.location.href = '/login'
   }
 
   return (

@@ -21,7 +21,7 @@ const LoginPage = () => {
     )
     await login(userLoginInfo);
     if (!data) return;
-    redirect('/task');
+    window.location.href = '/task';
   }
 
   const handleSignUp = () => {
