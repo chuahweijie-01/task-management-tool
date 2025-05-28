@@ -5,7 +5,6 @@ import LoginForm from './components/LoginForm'
 import { redirect } from 'next/navigation'
 import { LoginUserDto } from './dto/login-user.dto'
 import { login } from '../api/auth';
-import requestHandler from '@/app/shared/utils/requestHandler'
 import { useToast } from '@/app/hooks/useToast'
 
 
@@ -13,14 +12,16 @@ const LoginPage = () => {
   const { showToast } = useToast();
 
   const handleLogin = async (userLoginInfo: LoginUserDto) => {
-    const data = await requestHandler(
-      login(userLoginInfo),
-      showToast,
-      'Login successfully.',
-      'Login failed.'
-    )
-    if (!data) return;
-    window.location.href = '/task';
+    try {
+      const data = await login(userLoginInfo);
+      if (!data) return;
+      showToast({ type: 'success', description: 'Login successfully.' });
+      localStorage.setItem('token', data.token);
+      window.location.href = '/task';
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'Login failed.' });
+    }
   }
 
   const handleSignUp = () => {

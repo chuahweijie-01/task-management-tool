@@ -5,11 +5,12 @@ const API_URL = `${BASE_URL}/task`;
 
 export const getTasks = async () => {
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(API_URL, {
       method: 'GET',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
     });
 
