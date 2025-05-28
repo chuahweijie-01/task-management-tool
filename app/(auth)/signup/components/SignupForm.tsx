@@ -5,16 +5,17 @@ import InputField from '@/app/components/InputField'
 import React, { useEffect, useState } from 'react'
 import { IPasswordRules } from '../interfaces/password-rules.interface'
 import PasswordRulesValidator from './PasswordRulesValidator'
+import { CreateUserDto } from '../dto/create-user.dto'
 
 type Props = {
-    handleSignUp: (e: React.FormEvent<HTMLFormElement>) => void
+    handleSignUp: (createUser: CreateUserDto) => void
 }
 
 const SignupForm = ({ handleSignUp }: Props) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [name, setName] = useState('')
+    const [username, setUsername] = useState('')
     const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; name?: string }>({})
     const [hasUserInteracted, setHasUserInteracted] = useState(false)
     const [passwordRules, setPasswordRules] = useState<IPasswordRules>({
@@ -33,7 +34,7 @@ const SignupForm = ({ handleSignUp }: Props) => {
 
     const validate = (): boolean => {
         const newErrors: { email?: string; password?: string; confirmPassword?: string; name?: string } = {}
-        if (!name.trim()) newErrors.name = 'Name is required.'
+        if (!username.trim()) newErrors.name = 'Name is required.'
         if (!email.trim()) newErrors.email = 'Email is required.'
         if (!password.trim()) newErrors.password = 'Password is required.'
         if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match.'
@@ -44,7 +45,7 @@ const SignupForm = ({ handleSignUp }: Props) => {
         e.preventDefault()
         if (!hasUserInteracted) setHasUserInteracted(true)
         if (!validate()) return
-        handleSignUp(e)
+        handleSignUp({ email, password, username })
     }
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,10 +59,10 @@ const SignupForm = ({ handleSignUp }: Props) => {
                 <InputField
                     label='Your Name'
                     type='text'
-                    value={name}
+                    value={username}
                     placeholder='Hello, John Doe'
                     error={errors.name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={e => setUsername(e.target.value)}
                 />
                 <InputField
                     label='Email'

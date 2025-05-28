@@ -3,16 +3,31 @@
 import React from 'react'
 import LoginForm from './components/LoginForm'
 import { redirect } from 'next/navigation'
+import { LoginUserDto } from './dto/login-user.dto'
+import { login } from '../api/auth';
+import requestHandler from '@/app/shared/utils/requestHandler'
+import { useToast } from '@/app/hooks/useToast'
+
 
 const LoginPage = () => {
+  const { showToast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async (userLoginInfo: LoginUserDto) => {
+    const data = await requestHandler(
+      login(userLoginInfo),
+      showToast,
+      'Login successfully.',
+      'Login failed.'
+    )
+    await login(userLoginInfo);
+    if (!data) return;
     redirect('/task');
   }
+
   const handleSignUp = () => {
     redirect('/signup');
   }
+
   const handleForgotPassword = () => {
     // Handle forgot password logic here
   }

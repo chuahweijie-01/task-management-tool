@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Button from '@/app/components/Button';
 import Icon from '@/app/components/Icon';
 import ProgressBar from '@/app/components/ProgressBar';
-import getRemainingDays from '@/app/utils/getRemainingDays';
+import getRemainingDays from '@/app/shared/utils/getRemainingDays';
 
 type TaskCardProps = {
   id: string;
