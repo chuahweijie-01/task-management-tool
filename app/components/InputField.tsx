@@ -21,7 +21,7 @@ const InputField = ({ label, type, value, placeholder, error, minDate, onChange 
         id={refId}
         type={type}
         value={value}
-        onChange={onChange}
+        onChange={e => onChange(e)}
         placeholder={placeholder}
         min={type === 'date' ? minDate : undefined}
         className={`focus:border-gray-500 outline-none border rounded-lg p-2 ${type === 'checkbox' ? 'w-4 h-4 accent-green-700' : 'w-full'} ${error ? 'border-red-500' : 'border-gray-300'}`}

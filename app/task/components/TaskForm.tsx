@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/app/components/Button';
-import getTodayDate from '@/app/utils/getTodaysDate';
+import getTodayDate from '@/app/shared/utils/getTodaysDate';
 import React, { useEffect, useState } from 'react';
 import { ITaskData } from '../interfaces/task.interface';
 import InputField from '@/app/components/InputField';

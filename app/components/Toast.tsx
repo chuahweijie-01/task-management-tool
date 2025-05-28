@@ -1,6 +1,6 @@
 import FeatherIcon, { FeatherIconName } from 'feather-icons-react'
 import React, { useEffect } from 'react'
-import { ToastProps } from '../interfaces/toast.interface';
+import { ToastProps } from '../shared/interfaces/toast.interface';
 import { motion } from 'framer-motion';
 
 type ToastMap = {

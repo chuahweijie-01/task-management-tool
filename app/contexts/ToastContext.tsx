@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useState } from "react";
-import { ToastProps } from "../interfaces/toast.interface";
+import { ToastProps } from "../shared/interfaces/toast.interface";
 import Toast from "../components/Toast";
 import { PropsWithChildren } from "react";
 import { AnimatePresence } from "framer-motion";

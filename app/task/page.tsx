@@ -11,7 +11,7 @@ import { FilterOption } from './constants/filter-option';
 import { ITask, ITaskData } from './interfaces/task.interface';
 import { createTask, deleteTask, getTasks, updateTask } from './api/task';
 import { useToast } from '../hooks/useToast';
-import requestHandler from '../utils/requestHandler';
+import requestHandler from '../shared/utils/requestHandler';
 
 const sortTasks = (tasks: ITask[]) =>
   tasks.slice().sort((a, b) => {

@@ -3,11 +3,14 @@
 import React from 'react'
 import SignupForm from './components/SignupForm'
 import { redirect } from 'next/navigation'
+import { CreateUserDto } from './dto/create-user.dto'
+import { create } from '../api/auth';
 
 const SignupPage = () => {
 
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSignUp = async (createUser: CreateUserDto) => {
+    const data = await create(createUser);
+    if (!data) return;
     redirect('/login');
   }
 

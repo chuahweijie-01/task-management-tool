@@ -3,9 +3,10 @@
 import Button from '@/app/components/Button'
 import InputField from '@/app/components/InputField'
 import React, { useState } from 'react'
+import { LoginUserDto } from '../dto/login-user.dto'
 
 type Props = {
-  handleLogin: (e: React.FormEvent<HTMLFormElement>) => void
+  handleLogin: (loginUser: LoginUserDto) => void
   handleForgotPassword: () => void
 }
 
@@ -24,8 +25,8 @@ const LoginForm = ({ handleLogin, handleForgotPassword }: Props) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!validate()) return
-    handleLogin(e)
+    if (!validate()) return;
+    handleLogin({ email, password })
   }
 
   return (
