@@ -1,13 +1,11 @@
 'use client'
 
-import { logout } from '@/app/(auth)/api/auth';
 import React from 'react'
 
 const Header = () => {
   const handleSignOut = async () => {
-    const data = await logout();
-    if (!data) return;
-    window.location.href = '/login'
+    localStorage.removeItem('token'); // or sessionStorage.removeItem()
+    window.location.href = '/login'; // redirect to login
   }
 
   return (

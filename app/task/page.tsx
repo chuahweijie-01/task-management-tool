@@ -11,7 +11,6 @@ import { FilterOption } from './constants/filter-option';
 import { ITask, ITaskData } from './interfaces/task.interface';
 import { createTask, deleteTask, getTasks, updateTask } from './api/task';
 import { useToast } from '../hooks/useToast';
-import requestHandler from '../shared/utils/requestHandler';
 
 const sortTasks = (tasks: ITask[]) =>
   tasks.slice().sort((a, b) => {
@@ -76,49 +75,61 @@ const TasksPage = () => {
   }, []);
 
   const handleAddTask = useCallback(async (newTask: ITaskData) => {
-    const data = await requestHandler(
-      createTask(newTask),
-      showToast,
-      'Task added successfully.'
-    );
-    if (!data) return;
-    setTasks(sortTasks(data));
-    handleModalClose();
+    try {
+      const data = await createTask(newTask);
+      if (!data) return;
+      setTasks(sortTasks(data));
+      handleModalClose();
+      showToast({ type: 'success', description: 'Task added successfully.' });
+
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'An error occurred. Please try again.' });
+    }
   }, [handleModalClose, showToast]);
 
   const handleEditTask = useCallback(async (updatedTask: ITaskData) => {
     if (!editingTask) return;
-    const data = await requestHandler(
-      updateTask(editingTask.id, updatedTask),
-      showToast,
-      'Task updated successfully.'
-    );
-    if (!data) return;
-    setTasks(sortTasks(data));
-    handleModalClose();
+    try {
+      const data = await updateTask(editingTask.id, updatedTask);
+      if (!data) return;
+      setTasks(sortTasks(data));
+      handleModalClose();
+      showToast({ type: 'success', description: 'Task updated successfully.' });
+
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'An error occurred. Please try again.' });
+    }
   }, [editingTask, handleModalClose, showToast]);
 
   const handleDeleteTask = useCallback(async (taskId: string) => {
-    const data = await requestHandler(
-      deleteTask(taskId),
-      showToast,
-      'Task deleted successfully.'
-    );
-    if (!data) return;
-    setTasks(sortTasks(data));
+    try {
+      const data = await deleteTask(taskId);
+      if (!data) return;
+      setTasks(sortTasks(data));
+      showToast({ type: 'success', description: 'Task deleted successfully.' });
+
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'An error occurred. Please try again.' });
+    }
   }, [showToast]);
 
   const handleStatusChange = useCallback(async (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
     const updatedTask = { ...task, isCompleted: !task.isCompleted };
-    const data = await requestHandler(
-      updateTask(taskId, updatedTask),
-      showToast,
-      'Task status updated successfully.'
-    );
-    if (!data) return;
-    setTasks(sortTasks(data));
+    try {
+      const data = await updateTask(taskId, updatedTask);
+      if (!data) return;
+      setTasks(sortTasks(data));
+      showToast({ type: 'success', description: 'Task status updated successfully.' });
+
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'An error occurred. Please try again.' });
+    }
   }, [tasks, showToast]);
 
   return (

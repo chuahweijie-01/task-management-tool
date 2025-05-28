@@ -5,13 +5,21 @@ import SignupForm from './components/SignupForm'
 import { redirect } from 'next/navigation'
 import { CreateUserDto } from './dto/create-user.dto'
 import { create } from '../api/auth';
+import { useToast } from '@/app/hooks/useToast'
 
 const SignupPage = () => {
+  const { showToast } = useToast();
 
   const handleSignUp = async (createUser: CreateUserDto) => {
-    const data = await create(createUser);
-    if (!data) return;
-    redirect('/login');
+    try {
+      const data = await create(createUser);
+      if (!data) return;
+      showToast({ type: 'success', description: 'Signup successfully.' });
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error:', error);
+      showToast({ type: 'error', description: 'Account creation failed.' });
+    }
   }
 
   const handleLogin = () => {
