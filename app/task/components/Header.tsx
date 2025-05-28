@@ -1,7 +1,6 @@
 'use client'
 
 import { logout } from '@/app/(auth)/api/auth';
-import { redirect } from 'next/navigation';
 import React from 'react'
 
 const Header = () => {
