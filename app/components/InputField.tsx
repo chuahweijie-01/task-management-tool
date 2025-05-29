@@ -11,7 +11,7 @@ type InputFieldProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const InputField = ({ label, type, value, placeholder, error, minDate, onChange }: InputFieldProps) => {
+const InputField = ({ label, type, value, placeholder, error, minDate, checked, onChange }: InputFieldProps) => {
   const refId = `input-${label.toLowerCase()}`;
 
   return (
@@ -21,6 +21,7 @@ const InputField = ({ label, type, value, placeholder, error, minDate, onChange 
         id={refId}
         type={type}
         value={value}
+        checked={checked}
         onChange={e => onChange(e)}
         placeholder={placeholder}
         min={type === 'date' ? minDate : undefined}

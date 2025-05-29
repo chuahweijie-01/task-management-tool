@@ -1,92 +1,57 @@
-import { ITaskData } from "../interfaces/task.interface";
+import { CreateTaskDto } from "../dto/create-task-dto";
+import { UpdateTaskDto } from "../dto/update-task-dto";
+import { GetAllTaskResponse } from "../interfaces/get-all-task-response";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const API_URL = `${BASE_URL}/task`;
 
-export const getTasks = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(API_URL, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-    });
+const apiRequest = async <T>(
+  endpoint: string,
+  method: string,
+  body?: object
+): Promise<T> => {
+  const token = localStorage.getItem('token');
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch tasks');
-    }
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    ...(body && { body: JSON.stringify(body) }),
+  });
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-    throw error;
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`API error (${method} ${endpoint}):`, errorText);
+    throw new Error(errorText || 'API request failed');
   }
-}
 
-export const createTask = async (taskData: ITaskData) => {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(taskData),
-    });
+  return response.json();
+};
 
-    if (!response.ok) {
-      throw new Error('Failed to create task');
-    }
+export const getTasks = (): Promise<GetAllTaskResponse[]> => {
+  return apiRequest<GetAllTaskResponse[]>('', 'GET');
+};
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error creating task:', error);
-    throw error;
-  }
-}
+export const createTask = (taskData: CreateTaskDto): Promise<GetAllTaskResponse[]> => {
+  return apiRequest<GetAllTaskResponse[]>('', 'POST', taskData);
+};
 
-export const updateTask = async (taskId: string, taskData: ITaskData) => {
-  try {
-    const response = await fetch(`${API_URL}/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(taskData),
-    });
+export const updateTaskStatus = (
+  taskId: string,
+  taskData: Pick<UpdateTaskDto, 'isCompleted'>
+): Promise<GetAllTaskResponse[]> => {
+  return apiRequest<GetAllTaskResponse[]>(`/${taskId}/status`, 'PUT', taskData);
+};
 
-    if (!response.ok) {
-      throw new Error('Failed to update task');
-    }
+export const updateTask = (
+  taskId: string,
+  taskData: Partial<UpdateTaskDto>
+): Promise<GetAllTaskResponse[]> => {
+  return apiRequest<GetAllTaskResponse[]>(`/${taskId}`, 'PUT', taskData);
+};
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error updating task:', error);
-    throw error;
-  }
-}
-
-export const deleteTask = async (taskId: string) => {
-  try {
-    const response = await fetch(`${API_URL}/${taskId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete task');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error deleting task:', error);
-    throw error;
-  }
-}
+export const deleteTask = (taskId: string): Promise<GetAllTaskResponse[]> => {
+  return apiRequest<GetAllTaskResponse[]>(`/${taskId}`, 'DELETE');
+};

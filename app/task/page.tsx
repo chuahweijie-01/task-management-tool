@@ -8,11 +8,13 @@ import TaskCard from './components/TaskCard';
 import TaskForm from './components/TaskForm';
 import TaskSearch from './components/TaskSearch';
 import { FilterOption } from './constants/filter-option';
-import { ITask, ITaskData } from './interfaces/task.interface';
-import { createTask, deleteTask, getTasks, updateTask } from './api/task';
+import { createTask, deleteTask, getTasks, updateTask, updateTaskStatus } from './api/task';
 import { useToast } from '../hooks/useToast';
+import { GetAllTaskResponse } from './interfaces/get-all-task-response';
+import { UpdateTaskDto } from './dto/update-task-dto';
+import { CreateTaskDto } from './dto/create-task-dto';
 
-const sortTasks = (tasks: ITask[]) =>
+const sortTasks = (tasks: GetAllTaskResponse[]) =>
   tasks.slice().sort((a, b) => {
     if (a.isPriority !== b.isPriority) {
       return b.isPriority ? 1 : -1;
@@ -21,9 +23,9 @@ const sortTasks = (tasks: ITask[]) =>
   });
 
 const TasksPage = () => {
-  const [tasks, setTasks] = useState<ITask[]>([]);
+  const [tasks, setTasks] = useState<GetAllTaskResponse[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const [editingTask, setEditingTask] = useState<ITask | null>(null);
+  const [editingTask, setEditingTask] = useState<GetAllTaskResponse | null>(null);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<FilterOption>('incomplete');
   const { showToast } = useToast();
@@ -69,12 +71,12 @@ const TasksPage = () => {
     setOpenModal(true);
   }, []);
 
-  const openEditModal = useCallback((task: ITask) => {
+  const openEditModal = useCallback((task: GetAllTaskResponse) => {
     setEditingTask(task);
     setOpenModal(true);
   }, []);
 
-  const handleAddTask = useCallback(async (newTask: ITaskData) => {
+  const handleAddTask = useCallback(async (newTask: CreateTaskDto) => {
     try {
       const data = await createTask(newTask);
       if (!data) return;
@@ -88,7 +90,7 @@ const TasksPage = () => {
     }
   }, [handleModalClose, showToast]);
 
-  const handleEditTask = useCallback(async (updatedTask: ITaskData) => {
+  const handleEditTask = useCallback(async (updatedTask: UpdateTaskDto) => {
     if (!editingTask) return;
     try {
       const data = await updateTask(editingTask.id, updatedTask);
@@ -121,7 +123,7 @@ const TasksPage = () => {
     if (!task) return;
     const updatedTask = { ...task, isCompleted: !task.isCompleted };
     try {
-      const data = await updateTask(taskId, updatedTask);
+      const data = await updateTaskStatus(taskId, updatedTask);
       if (!data) return;
       setTasks(sortTasks(data));
       showToast({ type: 'success', description: 'Task status updated successfully.' });
@@ -132,12 +134,20 @@ const TasksPage = () => {
     }
   }, [tasks, showToast]);
 
+  const handleSubmit = useCallback(async (task: CreateTaskDto | UpdateTaskDto) => {
+    if (editingTask) {
+      await handleEditTask(task as UpdateTaskDto);
+    } else {
+      await handleAddTask(task as CreateTaskDto);
+    }
+  }, [editingTask, handleAddTask, handleEditTask]);
+
   return (
     <div className='p-5'>
       <Modal isOpen={openModal} onClose={handleModalClose}>
         <TaskForm
           isOpen={openModal}
-          onSubmit={editingTask ? handleEditTask : handleAddTask}
+          onSubmit={handleSubmit}
           initialData={editingTask || undefined}
           submitLabel={editingTask ? 'Update Task' : 'Create Task'}
           onCancel={handleModalClose}

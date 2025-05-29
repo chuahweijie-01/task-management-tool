@@ -3,15 +3,17 @@
 import Button from '@/app/components/Button';
 import getTodayDate from '@/app/shared/utils/getTodaysDate';
 import React, { useEffect, useState } from 'react';
-import { ITaskData } from '../interfaces/task.interface';
 import InputField from '@/app/components/InputField';
 import TextField from '@/app/components/TextField';
+import { GetAllTaskResponse } from '../interfaces/get-all-task-response';
+import { UpdateTaskDto } from '../dto/update-task-dto';
+import { CreateTaskDto } from '../dto/create-task-dto';
 
 type Props = {
     isOpen: boolean;
-    initialData?: ITaskData;
+    initialData?: GetAllTaskResponse;
     submitLabel?: string;
-    onSubmit: (task: ITaskData) => void;
+    onSubmit: (task: CreateTaskDto | UpdateTaskDto) => void | Promise<void>;
     onCancel?: () => void;
 };
 
@@ -28,7 +30,7 @@ const TaskForm: React.FC<Props> = ({
     const [description, setDescription] = useState('');
     const [deadlineDate, setDeadlineDate] = useState(getTodayDate());
     const [isPriority, setIsPriority] = useState(false);
-    const [errors, setErrors] = useState<Partial<Record<keyof ITaskData, string>>>({});
+    const [errors, setErrors] = useState<Partial<Record<keyof GetAllTaskResponse, string>>>({});
 
     useEffect(() => {
         if (isOpen) {
@@ -44,7 +46,7 @@ const TaskForm: React.FC<Props> = ({
     }, [isOpen, initialData]);
 
     const validate = (): boolean => {
-        const newErrors: Partial<Record<keyof ITaskData, string>> = {};
+        const newErrors: Partial<Record<keyof GetAllTaskResponse, string>> = {};
         if (!title.trim()) newErrors.title = 'Task title is required.';
         if (description.trim().length >= MAX_DESCRIPTION_LENGTH)
             newErrors.description = `Description must be less than ${MAX_DESCRIPTION_LENGTH} characters.`;
@@ -71,10 +73,10 @@ const TaskForm: React.FC<Props> = ({
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!validate()) return;
-        onSubmit({ title, description, deadlineDate, isPriority });
+        await onSubmit({ title, description, deadlineDate, isPriority });
         if (!initialData) resetForm();
     };
 
