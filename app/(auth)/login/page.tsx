@@ -1,23 +1,29 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import LoginForm from './components/LoginForm'
 import { redirect } from 'next/navigation'
 import { LoginUserDto } from './dto/login-user.dto'
-import { login } from '../api/auth';
+import { loginUser } from '../api/auth';
 import { useToast } from '@/app/hooks/useToast'
+import { useAuth } from '@/app/hooks/useAuth'
 
 
 const LoginPage = () => {
   const { showToast } = useToast();
+  const { token, login } = useAuth();
+
+  useEffect(() => {
+    if (token) redirect('/task');
+  }, [token])
 
   const handleLogin = async (userLoginInfo: LoginUserDto) => {
     try {
-      const data = await login(userLoginInfo);
+      const data = await loginUser(userLoginInfo);
       if (!data) return;
+
       showToast({ type: 'success', description: 'Login successfully.' });
-      localStorage.setItem('token', data.token);
-      window.location.href = '/task';
+      login(data.token);
     } catch (error) {
       console.error('Error:', error);
       showToast({ type: 'error', description: 'Login failed.' });

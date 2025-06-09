@@ -1,11 +1,13 @@
 'use client'
 
+import { useAuth } from '@/app/hooks/useAuth'
 import React from 'react'
 
 const Header = () => {
+  const { logout } = useAuth();
+
   const handleSignOut = async () => {
-    localStorage.removeItem('token'); // or sessionStorage.removeItem()
-    window.location.href = '/login'; // redirect to login
+    logout();
   }
 
   return (
