@@ -36,13 +36,13 @@ export const create = (createUser: CreateUserDto) => {
   });
 };
 
-export const login = (loginUser: LoginUserDto): Promise<LoginUserResponse> => {
+export const loginUser = (loginUser: LoginUserDto): Promise<LoginUserResponse> => {
   return apiRequest(`${AUTH_URL}/login`, 'POST', {
     email: loginUser.email,
     password: loginUser.password,
   });
 };
 
-export const logout = () => {
+export const logoutUser = () => {
   return apiRequest(`${AUTH_URL}/logout`, 'POST');
 };

@@ -13,6 +13,8 @@ import { useToast } from '../hooks/useToast';
 import { GetAllTaskResponse } from './interfaces/get-all-task-response';
 import { UpdateTaskDto } from './dto/update-task-dto';
 import { CreateTaskDto } from './dto/create-task-dto';
+import { useAuth } from '../hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const sortTasks = (tasks: GetAllTaskResponse[]) =>
   tasks.slice().sort((a, b) => {
@@ -29,8 +31,15 @@ const TasksPage = () => {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<FilterOption>('incomplete');
   const { showToast } = useToast();
+  const { token } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
+    if (!token) router.push('/login');
+  }, [token, router])
+
+  useEffect(() => {
+    if (!token) return;
     const fetchTasks = async () => {
       try {
         const data = await getTasks();
@@ -40,7 +49,7 @@ const TasksPage = () => {
       }
     };
     fetchTasks();
-  }, []);
+  }, [token]);
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch = search
@@ -141,6 +150,10 @@ const TasksPage = () => {
       await handleAddTask(task as CreateTaskDto);
     }
   }, [editingTask, handleAddTask, handleEditTask]);
+
+  if (!token) {
+    return null;
+  }
 
   return (
     <div className='p-5'>
